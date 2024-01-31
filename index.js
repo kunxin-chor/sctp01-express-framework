@@ -24,13 +24,14 @@ app.use(
 );
 
 const landingRoutes = require('./routes/landing.js');
-
+const productRoutes = require('./routes/products');
 
 async function main() {
     // if the requested url
     // begins with '/', send it
     // to the landingRoutes router
     app.use('/', landingRoutes);
+    app.use('/products', productRoutes)
 
 }
 
