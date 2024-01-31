@@ -23,10 +23,15 @@ app.use(
   })
 );
 
+const landingRoutes = require('./routes/landing.js');
+
+
 async function main() {
-    app.get('/', (req,res)=>{
-        res.send("It's alive!")
-    })
+    // if the requested url
+    // begins with '/', send it
+    // to the landingRoutes router
+    app.use('/', landingRoutes);
+
 }
 
 main();
