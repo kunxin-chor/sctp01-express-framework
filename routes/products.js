@@ -108,6 +108,27 @@ router.post('/:product_id/update', async function(req,res){
     })
 })
 
+router.get('/:product_id/delete', async function(req,res){
+     // get the product that we want to delete
+     const product = await Product.where({
+        'id': req.params.product_id
+    }).fetch({
+        require: true // if no such product is found, throw an exception
+    }); 
 
+    res.render('products/delete', {
+        product: product.toJSON()
+    })
+})
+
+router.post('/:product_id/delete', async function(req,res){
+    const product = await Product.where({
+        'id': req.params.product_id
+    }).fetch({
+        require: true // if no such product is found, throw an exception
+    }); 
+    await product.destroy();
+    res.redirect('/products');
+})
 
 module.exports = router;
