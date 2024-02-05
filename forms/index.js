@@ -29,7 +29,7 @@ const bootstrapField = function (name, object) {
  * @param {*} choices Choice must be an array of nested array, each nested array's index 0 is the ID, and 1 is the name
  * @returns 
  */
-const createProductForm = (choices=[]) => {
+const createProductForm = (choices=[], tags=[]) => {
     // forms.create takes in one argument
     // it is an object that defines the form
     // the key will be the `name` of each form field
@@ -54,6 +54,12 @@ const createProductForm = (choices=[]) => {
             errorAfterField: true,
             widget: widgets.select(), 
             choices: choices
+        }),
+        tags:fields.string({
+            required: true,
+            errorAfterField: true,
+            widget: widgets.multipleSelect(),
+            choices: tags
         })
     })
 }

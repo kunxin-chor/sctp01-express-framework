@@ -14,16 +14,26 @@ const Product = bookshelf.model('Product',{
         // 1. the foregin key name must be the `<other_table_name_in_lower_case_singular_form>_id`
         return this.belongsTo('Category'); // one product belongs to one category
                                            // a product row has a FK pointing to one row in the categories table
+    },
+    tags:function() {
+        return this.belongsToMany('Tag');
     }
 })
 
 const Category = bookshelf.model('Category',{
     tableName:'categories',
     products:function(){
-        return this.hasMany('product')
+        return this.belongsToMany('Product')
+    }
+})
+
+const Tag = bookshelf.model("Tag",{
+    tableName:'tags',
+    products:function() {
+        return this.hasMany('Product')
     }
 })
 
 module.exports = {
-    Product, Category
+    Product, Category, Tag
 }
