@@ -8,9 +8,22 @@ const bookshelf = require('../bookshelf') // same as requiring ../bookshelf/inde
 // Convention: The name of the model should the singular form
 // of the table name and the first alphabet is upper case
 const Product = bookshelf.model('Product',{
-    tableName:'products'
+    tableName:'products',
+    category:function() {
+        // for this to work
+        // 1. the foregin key name must be the `<other_table_name_in_lower_case_singular_form>_id`
+        return this.belongsTo('Category'); // one product belongs to one category
+                                           // a product row has a FK pointing to one row in the categories table
+    }
+})
+
+const Category = bookshelf.model('Category',{
+    tableName:'categories',
+    products:function(){
+        return this.hasMany('product')
+    }
 })
 
 module.exports = {
-    Product
+    Product, Category
 }

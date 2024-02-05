@@ -2,6 +2,7 @@ const forms = require('forms');
 // create some shorts
 const fields = forms.fields;
 const validators = forms.validators;
+const widgets = forms.widgets
 
 const bootstrapField = function (name, object) {
     if (!Array.isArray(object.widget.classes)) { object.widget.classes = []; }
@@ -23,7 +24,12 @@ const bootstrapField = function (name, object) {
     return '<div class="form-group">' + label + widget + error + '</div>';
 };
 
-const createProductForm = () => {
+/**
+ * 
+ * @param {*} choices Choice must be an array of nested array, each nested array's index 0 is the ID, and 1 is the name
+ * @returns 
+ */
+const createProductForm = (choices=[]) => {
     // forms.create takes in one argument
     // it is an object that defines the form
     // the key will be the `name` of each form field
@@ -41,6 +47,13 @@ const createProductForm = () => {
         description: fields.string({
             required: true,
             errorAfterField: true
+        }),
+        category_id: fields.string({
+            label: 'Category',
+            required: true,
+            errorAfterField: true,
+            widget: widgets.select(), 
+            choices: choices
         })
     })
 }
