@@ -1,6 +1,7 @@
 const express = require("express");
 const hbs = require("hbs");
 const wax = require("wax-on");
+const csurf = require('csurf');
 require("dotenv").config();
 
 // import in all the dependecies for sessions
@@ -48,6 +49,28 @@ app.use(function(req,res,next){
 
   next();
 })
+
+// enable csurf
+app.use(csurf());
+
+app.use(function(req,res,next){
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
+
+// If a middleware function has FOUR arguments, the first one is for the error
+// Write the error handler for a middleware as its next middleware
+// i.e the middleware below is to handle the errors from the immediate
+// previous middleware
+app.use(function(err, req,res,next){
+  if (err && err.code == "EBADCSRFTOKEN") {
+    req.flash("error_messages", "The form has expired");
+    res.redirect('back'); // same as pressing the BACK button on the browser
+  } else {
+    next();
+  }
+});
+
 
 const landingRoutes = require('./routes/landing.js');
 const productRoutes = require('./routes/products');

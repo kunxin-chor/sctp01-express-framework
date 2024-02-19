@@ -5,7 +5,9 @@
 <form method="POST">
     {{{form}}}
     <input type="submit" class="btn btn-primary mt-3" value="Sign up"/>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}"/>
 </form>
 {{/block}}
+
 
 {{/extends}}
