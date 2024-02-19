@@ -64,4 +64,39 @@ const createProductForm = (choices=[], tags=[]) => {
     })
 }
 
-module.exports = { createProductForm, bootstrapField}
+const createRegistrationForm = ()=> {
+    return forms.create({
+        username: fields.string({
+            required: true,
+            errorAfterField: true
+        }),
+        email:fields.email({
+            required: true,
+            errorAfterField: true
+        }),
+        password: fields.password({
+            required: true,
+            errorAfterField: true
+        }),
+        confirm_password: fields.password({
+            required: true,
+            errorAfterField: true,
+            validators: [validators.matchField('password')]
+        })
+    })
+}
+
+const createLoginForm = ()=> {
+    return forms.create({
+        email:fields.email({
+            required: true,
+            errorAfterField: true
+        }),
+        password: fields.password({
+            required: true,
+            errorAfterField: true
+        })
+    })
+}
+
+module.exports = { createProductForm, createRegistrationForm, createLoginForm, bootstrapField}
