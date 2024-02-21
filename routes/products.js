@@ -28,7 +28,11 @@ router.get('/create', async function (req, res) {
     // create an instance of the form
     const productForm = createProductForm(allCategories, tags);
     res.render('products/create', {
-        form: productForm.toHTML(bootstrapField)
+        form: productForm.toHTML(bootstrapField),
+        cloudinaryName: process.env.CLOUDINARY_NAME,
+        cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+        cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
+        
     })
 })
 
@@ -54,7 +58,8 @@ router.post('/create', async function (req, res) {
             product.set('name', form.data.name);
             product.set('cost', form.data.cost);
             product.set('description', form.data.description);
-            product.set('category_id', form.data.category_id)
+            product.set('category_id', form.data.category_id);
+            product.set('image_url', form.data.image_url);
         
             // save the product first so we use its product
             await product.save();
@@ -79,12 +84,18 @@ router.post('/create', async function (req, res) {
         },
         "error": function (form) {
             res.render('products/create', {
-                form: form.toHTML(bootstrapField)
+                form: form.toHTML(bootstrapField),
+                cloudinaryName: process.env.CLOUDINARY_NAME,
+                cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+                cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
             })
         },
         "empty": function (form) {
             res.render('products/create', {
-                form: form.toHTML(bootstrapField)
+                form: form.toHTML(bootstrapField),
+                cloudinaryName: process.env.CLOUDINARY_NAME,
+                cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+                cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
             })
         }
     })
@@ -110,14 +121,18 @@ router.get('/:product_id/update', async function (req, res) {
     productForm.fields.description.value = product.get('description');
     productForm.fields.cost.value = product.get('cost');
     productForm.fields.category_id.value = product.get('category_id');
+    productForm.fields.image_url.value = product.get('image_url');
 
     // get all the selected tags' id
     const selectedTags = await product.related('tags').pluck('id');
-    console.log(selectedTags);
     productForm.fields.tags.value = selectedTags;
 
     res.render('products/update', {
-        form: productForm.toHTML(bootstrapField)
+        form: productForm.toHTML(bootstrapField),
+        product: product.toJSON(),
+        cloudinaryName: process.env.CLOUDINARY_NAME,
+        cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+        cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
     })
 })
 
@@ -159,12 +174,18 @@ router.post('/:product_id/update', async function(req,res)
         },
         "error": async function(form) {
             res.render('products/update',{
-                form: form.toHTML(bootstrapField)
+                form: form.toHTML(bootstrapField),
+                cloudinaryName: process.env.CLOUDINARY_NAME,
+                cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+                cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
             })
         },
         "empty":async function(form){
             res.render('products/update',{
-                form: form.toHTML(bootstrapField)
+                form: form.toHTML(bootstrapField),
+                cloudinaryName: process.env.CLOUDINARY_NAME,
+                cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+                cloudinaryPreset: process.env.CLOUDINARY_UPLOAD_PRESET
             })
         }
     })
