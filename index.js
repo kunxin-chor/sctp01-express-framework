@@ -58,12 +58,16 @@ app.use(function(req,res,next){
   next();
 })
 
-// enable csurf
-app.use(csurf());
-
+// enable csurf (have to exclude Stripe)
+// app.use(csurf());
+const csurfInstance = csurf();
 app.use(function(req,res,next){
-  res.locals.csrfToken = req.csrfToken();
-  next();
+  // exclude csurf middleware if the url is checkout/process_payment
+  if (req.url == "/checkout/process_payment") {
+    return next();
+  }
+  // if not excluded from cusrf, call the csurf middleware function
+  csurfInstance(req,res,next);
 })
 
 // If a middleware function has FOUR arguments, the first one is for the error
@@ -79,12 +83,22 @@ app.use(function(err, req,res,next){
   }
 });
 
+app.use(function(req,res,next){
+  if (req.csrfToken) {
+    res.locals.csrfToken = req.csrfToken();
+  }
+  next();
+})
+
+
+
 
 const landingRoutes = require('./routes/landing.js');
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users');
 const cloudinaryRoutes = require('./routes/cloudinary');
 const cartRoutes = require('./routes/shoppingCart.js');
+const checkoutRoutes = require('./routes/checkout.js');
 
 async function main() {
     // if the requested url
@@ -95,6 +109,7 @@ async function main() {
     app.use('/users', userRoutes);
     app.use('/cloudinary', cloudinaryRoutes);
     app.use('/cart', cartRoutes);
+    app.use('/checkout', checkoutRoutes);
 
 }
 
