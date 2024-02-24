@@ -44,7 +44,10 @@ router.get('/', async function(req,res){
         mode: 'payment', // indicate it's immediate payment
         line_items: lineItems,
         success_url: "https://www.google.com",
-        cancel_url: "https://www.yahoo.com"
+        cancel_url: "https://www.yahoo.com",
+        metadata: {
+            'user_id': req.session.userId
+        }
     }
 
     const stripeSession = await Stripe.checkout.sessions.create(payment);
