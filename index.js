@@ -3,6 +3,7 @@ const hbs = require("hbs");
 const wax = require("wax-on");
 const csurf = require('csurf');
 require("dotenv").config();
+const cors = require('cors');
 
 // import in all the dependecies for sessions
 const session = require('express-session');
@@ -29,7 +30,9 @@ app.use(
     extended: false
   })
 );
+// enable CORS (make sure its before sessions!)
 
+app.use(cors());
 // enable sessions
 app.use(session({
   store: new FileStore(),
@@ -100,7 +103,8 @@ const cloudinaryRoutes = require('./routes/cloudinary');
 const cartRoutes = require('./routes/shoppingCart.js');
 const checkoutRoutes = require('./routes/checkout.js');
 const api = {
-  products: require('./routes/api/products.js')
+  products: require('./routes/api/products.js'),
+  users: require('./routes/api/users')
 }
 
 async function main() {
@@ -113,7 +117,8 @@ async function main() {
     app.use('/cloudinary', cloudinaryRoutes);
     app.use('/cart', cartRoutes);
     app.use('/checkout', checkoutRoutes);
-    app.use('/api/products', express.json(), api.products)
+    app.use('/api/products', express.json(), api.products);
+    app.use('/api/users', express.json(), api.users)
 
 }
 
