@@ -1,16 +1,18 @@
 const express = require('express');
 const { Product, Category, Tag } = require('../models');
 const { createProductForm, createSearchForm, bootstrapField } = require('../forms');
+const { getAllTags, getAllCategories, getProductById, createProduct } = require('../dal/products');
 
 const router = express.Router();
 
 //  url: /products
 router.get('/', async function (req, res) {
 
-    const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
+    const allCategories = await getAllCategories();
     allCategories.unshift([0, '-------']);
+  
     // Get all the Tags and map them into an array of array, and for each inner array, element 0 is ID and element 1 is the name
-    const allTags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+    const allTags = await getAllTags();
 
     const searchForm = createSearchForm(allCategories, allTags);
     searchForm.handle(req, {
@@ -84,10 +86,10 @@ router.get('/create', async function (req, res) {
     // do a mapping
     // for each category, return an array with two element (index 0 is ID, index 1 is name)
     // and push it onto allCategories, which will be an array
-    const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
+    const allCategories = await getAllCategories();
 
     // Get all the Tags and map them into an array of array, and for each inner array, element 0 is ID and element 1 is the name
-    const tags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+    const tags = await getAllTags();
 
     // create an instance of the form
     const productForm = createProductForm(allCategories, tags);
@@ -101,9 +103,10 @@ router.get('/create', async function (req, res) {
 })
 
 router.post('/create', async function (req, res) {
-    const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
+    const allCategories = await getAllCategories();
+    
     // Get all the Tags and map them into an array of array, and for each inner array, element 0 is ID and element 1 is the name
-    const tags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
+    const tags = await getAllTags();
 
 
     const productForm = createProductForm(allCategories, tags);
@@ -118,16 +121,7 @@ router.post('/create', async function (req, res) {
 
             // If we are creating a new instance of the model (like below)
             // it means we are referring a ROW in the table
-            const product = new Product();
-            product.set('name', form.data.name);
-            product.set('cost', form.data.cost);
-            product.set('description', form.data.description);
-            product.set('category_id', form.data.category_id);
-            product.set('image_url', form.data.image_url);
-
-            // save the product first so we use its product
-            await product.save();
-
+            const product = await createProduct(form.data);
             let tags = form.data.tags;
             // the tags will be in comma delimited form
             // so for example if the user selects ID 3, 5 and 6
@@ -166,16 +160,17 @@ router.post('/create', async function (req, res) {
 })
 
 router.get('/:product_id/update', async function (req, res) {
-    const tags = await Tag.fetchAll().map(tag => [tag.get('id'), tag.get('name')]);
-    const allCategories = await Category.fetchAll().map(category => [category.get('id'), category.get('name')]);
+    const tags = await getAllTags();
+    const allCategories = await getAllCategories();
 
     // get the product that we want to update
-    const product = await Product.where({
-        'id': req.params.product_id
-    }).fetch({
-        withRelated: ['tags'],
-        require: true // if no such product is found, throw an exception
-    }); // todo: use try...catch to catch exception and send back status 404
+    const product = await getProductById(req.params.product_id)
+
+    if (!product) {
+        req.flash('error_messages', "Product ID doesn't exist");
+        res.redirect('back');
+        return;
+    }
 
     // create the product form and prepopulate all its fields
     // with the existing value from the product which is being edited
@@ -256,11 +251,12 @@ router.post('/:product_id/update', async function (req, res) {
 
 router.get('/:product_id/delete', async function (req, res) {
     // get the product that we want to delete
-    const product = await Product.where({
-        'id': req.params.product_id
-    }).fetch({
-        require: true // if no such product is found, throw an exception
-    });
+    const product = await getProductById(req.params.product_id);
+    if (!product) {
+        req.flash('error_messages', 'Product ID is not found');
+        res.redirect('back');
+        return;
+    }
 
     res.render('products/delete', {
         product: product.toJSON()
