@@ -63,6 +63,14 @@ router.post('/login', function(req,res){
                 // console.log(form.data);
                 if (await bcrypt.compare(form.data.password, user.get("password"))) {
                     req.session.userId = user.get('id');
+                    req.session.userName = user.get('username');
+
+                    // note: in the lab sheet it is
+                    // req.session.user = {
+                    //     id: user.get('id'),
+                    //     name: user.get('name')
+                    // }
+
                     res.redirect('/users/profile');
                 } else {
                     req.flash("error_messages", "Unable to log in");

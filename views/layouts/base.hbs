@@ -18,6 +18,37 @@
 
 <body>
     <div class="container">
+        <!-- A grey horizontal navbar that becomes vertical on small screens -->
+<nav class="navbar navbar-expand-sm bg-light">
+
+  <div class="container-fluid">
+    <!-- Links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/products">Products</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link 2</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link 3</a>
+      </li>
+    </ul>
+    <div>
+       {{#if userName}}
+        Hi, {{userName}}
+
+        <a href="/cart" class="btn btn-primary btn-sm">My Cart</a>
+
+        <a href="/users/logout" class="btn btn-danger btn-sm">Logout</a>
+        {{else}}
+        <a href="/users/login" class="btn btn-primary btn-sm">Login</a>
+       {{/if}}
+    </div>
+  </div>
+
+</nav>
+
 
         {{#if success_messages}}
             {{#each success_messages}}

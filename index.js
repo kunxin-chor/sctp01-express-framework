@@ -50,6 +50,14 @@ app.use(function(req,res,next){
   next();
 })
 
+// share the user name with all hbs file
+app.use(function(req,res,next){
+  if (req.session.userName) {
+    res.locals.userName = req.session.userName;
+  }
+  next();
+})
+
 // enable csurf
 app.use(csurf());
 
@@ -76,6 +84,7 @@ const landingRoutes = require('./routes/landing.js');
 const productRoutes = require('./routes/products');
 const userRoutes = require('./routes/users');
 const cloudinaryRoutes = require('./routes/cloudinary');
+const cartRoutes = require('./routes/shoppingCart.js');
 
 async function main() {
     // if the requested url
@@ -85,6 +94,7 @@ async function main() {
     app.use('/products', productRoutes);
     app.use('/users', userRoutes);
     app.use('/cloudinary', cloudinaryRoutes);
+    app.use('/cart', cartRoutes);
 
 }
 
