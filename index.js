@@ -33,7 +33,7 @@ app.use(
 // enable sessions
 app.use(session({
   store: new FileStore(),
-  secret: "keyboard cat",
+  secret: "9599FDAA9E559D62984DC42CBE2A2",
   resave: false, 
   saveUninitialized: true
 }))
